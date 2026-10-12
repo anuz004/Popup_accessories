@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { useLiveTime } from "@/lib/useLiveTime";
 import type { WatchStyle } from "@/data/products";
 
 interface WatchArtProps {
@@ -20,9 +20,12 @@ export function WatchArt({
   caseColor,
   dialColor,
   accent = "#D4AF37",
-  animated = true,
   className = "",
 }: WatchArtProps) {
+  const time = useLiveTime();
+  const seconds = time.getSeconds();
+  const minutes = time.getMinutes() + seconds / 60;
+  const hours = (time.getHours() % 12) + minutes / 60;
   const gradId = `case-${caseColor.replace("#", "")}-${style}`;
   const dialGradId = `dial-${dialColor.replace("#", "")}-${style}`;
 
@@ -31,6 +34,8 @@ export function WatchArt({
       viewBox="0 0 400 400"
       className={className}
       xmlns="http://www.w3.org/2000/svg"
+      role="img"
+      aria-label={`Grand Hour watch showing local time ${time.toLocaleTimeString()}`}
     >
       <defs>
         <radialGradient id={gradId} cx="35%" cy="30%" r="75%">
@@ -161,13 +166,13 @@ export function WatchArt({
         x="200"
         y="150"
         textAnchor="middle"
-        fontSize="12"
-        letterSpacing="3"
+        fontSize="10"
+        letterSpacing="1.5"
         fontFamily="Playfair Display, serif"
         fill={style === "classic" || style === "minimal" ? "#0F0F10" : accent}
         opacity="0.85"
       >
-        POPUP
+        GRAND HOUR
       </text>
 
       {/* Date window */}
@@ -175,14 +180,14 @@ export function WatchArt({
         <g>
           <rect x="228" y="192" width="22" height="16" rx="2" fill="#EDEDED" />
           <text x="239" y="204" textAnchor="middle" fontSize="10" fontFamily="Inter, sans-serif" fill="#0F0F10">
-            24
+            {time.getDate()}
           </text>
         </g>
       )}
 
       {/* Hands */}
       <g>
-        <motion.line
+        <line
           x1="200"
           y1="200"
           x2="200"
@@ -190,11 +195,9 @@ export function WatchArt({
           stroke={style === "classic" || style === "diamond" ? accent : "#FFFFFF"}
           strokeWidth="6"
           strokeLinecap="round"
-          animate={animated ? { rotate: 360 } : undefined}
-          transition={{ duration: 43200, repeat: Infinity, ease: "linear" }}
-          style={{ transformOrigin: "200px 200px", rotate: 65 }}
+          transform={`rotate(${hours * 30} 200 200)`}
         />
-        <motion.line
+        <line
           x1="200"
           y1="200"
           x2="200"
@@ -202,11 +205,9 @@ export function WatchArt({
           stroke={style === "classic" || style === "diamond" ? accent : "#FFFFFF"}
           strokeWidth="4"
           strokeLinecap="round"
-          animate={animated ? { rotate: 360 } : undefined}
-          transition={{ duration: 3600, repeat: Infinity, ease: "linear" }}
-          style={{ transformOrigin: "200px 200px", rotate: 210 }}
+          transform={`rotate(${minutes * 6} 200 200)`}
         />
-        <motion.line
+        <line
           x1="200"
           y1="215"
           x2="200"
@@ -214,9 +215,7 @@ export function WatchArt({
           stroke={accent}
           strokeWidth="1.5"
           strokeLinecap="round"
-          animate={animated ? { rotate: 360 } : undefined}
-          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-          style={{ transformOrigin: "200px 200px" }}
+          transform={`rotate(${seconds * 6} 200 200)`}
         />
         <circle cx="200" cy="200" r="7" fill={accent} />
       </g>

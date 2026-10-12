@@ -1,4 +1,4 @@
-# Popup Accessories
+# Grand Hour
 
 A responsive watch storefront and admin dashboard built with React, TypeScript, Vite, Tailwind CSS and Supabase.
 

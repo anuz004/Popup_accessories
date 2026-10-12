@@ -155,7 +155,7 @@ export const testimonials = [
     name: "Meera S.",
     role: "Verified Buyer",
     quote:
-      "Celeste Pearl is the first watch I've owned that gets complimented more than my jewelry. Delivery from Popup Accessories was fast and tracked closely.",
+      "Celeste Pearl is the first watch I've owned that gets complimented more than my jewelry. Delivery from Grand Hour was fast and tracked closely.",
     rating: 5,
   },
   {

@@ -29,17 +29,17 @@ export function About() {
             <DialEyebrow hour="XI" label="Our Story" />
           </motion.div>
           <motion.h1 variants={fadeUp} className="font-display text-4xl md:text-5xl text-white mb-6 leading-tight">
-            About Popup Accessories
+            About Grand Hour
           </motion.h1>
           <motion.p variants={fadeUp} className="text-white/60 text-base leading-relaxed mb-5">
-            Welcome to Popup Accessories, your trusted destination for premium watches and fashion accessories in
+            Welcome to Grand Hour, your trusted destination for premium watches and fashion accessories in
             the heart of Coimbatore. Conveniently located at H.R Complex, Prakasam Bus Stop, Oppanakara Street,
             near AB Lodge, Town Hall, Coimbatore, we are dedicated to bringing you an exceptional collection of
             stylish, high-quality timepieces that suit every lifestyle and occasion.
           </motion.p>
           <motion.p variants={fadeUp} className="text-white/60 text-base leading-relaxed mb-5">
             Whether you're looking for a timeless classic, a modern everyday watch, a sporty design, or a luxury
-            statement piece, Popup Accessories offers carefully selected collections that combine elegance,
+            statement piece, Grand Hour offers carefully selected collections that combine elegance,
             durability, and value. We believe that a watch is more than just a way to tell time — it's an
             expression of your personality and style.
           </motion.p>

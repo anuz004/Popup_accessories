@@ -232,7 +232,7 @@ export function ProductDetail() {
             <AccordionItem value="warranty" className="border-white/[0.06]">
               <AccordionTrigger className="text-white text-sm hover:text-gold">Warranty</AccordionTrigger>
               <AccordionContent className="text-white/55 text-sm leading-relaxed">
-                Every Popup Accessories watch comes with a 1-year manufacturer warranty covering movement defects. Reach out to our support team and we'll sort out any repairs or replacement.
+                Every Grand Hour watch comes with a 1-year manufacturer warranty covering movement defects. Reach out to our support team and we'll sort out any repairs or replacement.
               </AccordionContent>
             </AccordionItem>
           </Accordion>

@@ -58,7 +58,11 @@ export function RouterProvider({ children }: { children: ReactNode }) {
       window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
     };
     window.addEventListener("popstate", sync);
-    return () => window.removeEventListener("popstate", sync);
+    window.addEventListener("hashchange", sync);
+    return () => {
+      window.removeEventListener("popstate", sync);
+      window.removeEventListener("hashchange", sync);
+    };
   }, []);
 
   const go: RouterState["go"] = (nextPage, opts) => {

@@ -64,7 +64,7 @@ export function Contact() {
             className="rounded-[20px] overflow-hidden border border-white/[0.06] h-72 md:h-80"
           >
             <iframe
-              title="Popup Accessories location"
+              title="Grand Hour location"
               src={MAP_SRC}
               width="100%"
               height="100%"

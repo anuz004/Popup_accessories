@@ -1,7 +1,10 @@
+import { demoCredentials } from "@/lib/localDatabase";
+import { BrandLogo } from "@/components/BrandLogo";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Watch, Lock, ArrowRight } from "lucide-react";
+import { Lock, ArrowRight } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { localDemoMode } from "@/lib/supabase";
 
 export function AdminLogin() {
   const { signIn } = useAuth();
@@ -14,9 +17,14 @@ export function AdminLogin() {
     e.preventDefault();
     setSubmitting(true);
     setError(null);
-    const { error } = await signIn(email, password);
-    setSubmitting(false);
-    if (error) setError(error);
+    try {
+      const { error } = await signIn(email, password);
+      if (error) setError(error);
+    } catch {
+      setError("Unable to connect. Check your connection and try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -28,10 +36,16 @@ export function AdminLogin() {
         className="w-full max-w-sm bg-[#111114] border border-white/10 rounded-[20px] p-8"
       >
         <div className="flex items-center gap-2 justify-center mb-6">
-          <Watch size={22} className="text-gold" strokeWidth={1.5} />
-          <span className="font-display text-lg tracking-[0.12em] text-white">POPUP ACCESSORIES</span>
+          <BrandLogo className="w-[240px] max-w-full" />
         </div>
         <p className="text-center text-white/40 text-xs uppercase tracking-luxe mb-8">Admin Sign In</p>
+        {localDemoMode && (
+          <p className="mb-6 rounded-xl border border-gold/20 bg-gold/5 p-3 text-sm text-gold" role="status">
+            Local demo sign-in<br />
+            Email: {demoCredentials.email}<br />
+            Password: {demoCredentials.password}
+          </p>
+        )}
 
         <form onSubmit={submit} className="space-y-4">
           <div>

@@ -1,6 +1,8 @@
+import { localDemoMode } from "@/lib/supabase";
+import { BrandLogo } from "@/components/BrandLogo";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Watch, LayoutGrid, Tag, Package, LogOut, ExternalLink, Loader2, Mail } from "lucide-react";
+import { LayoutGrid, Tag, Package, LogOut, ExternalLink, Loader2, Mail } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useProducts } from "@/context/ProductsContext";
 import { useRouter } from "@/context/RouterContext";
@@ -33,15 +35,17 @@ export function Admin() {
     );
   }
 
-  if (!session || !isAdmin) return <AdminLogin />;
+  if ((!localDemoMode && !session) || !isAdmin) return <AdminLogin />;
 
   return (
     <div className="min-h-screen bg-[#080808] flex flex-col lg:flex-row">
       {/* Sidebar */}
       <aside className="lg:w-64 shrink-0 border-b lg:border-b-0 lg:border-r border-white/[0.06] flex lg:flex-col">
         <div className="hidden lg:flex items-center gap-2 px-6 h-20 border-b border-white/[0.06]">
-          <Watch size={20} className="text-gold" strokeWidth={1.5} />
-          <span className="font-display text-sm tracking-[0.1em] text-white">POPUP ADMIN</span>
+          <div>
+            <BrandLogo className="w-[190px]" />
+            <p className="mt-1 text-[10px] uppercase tracking-widest text-white/50">Admin</p>
+          </div>
         </div>
         <nav className="flex lg:flex-col flex-1 px-3 lg:py-4 gap-1 overflow-x-auto">
           {TABS.map((t) => (
@@ -74,6 +78,7 @@ export function Admin() {
 
       {/* Content */}
       <main className="flex-1 p-5 md:p-10 max-w-5xl">
+        {localDemoMode && <p className="mb-6 rounded-xl border border-gold/20 bg-gold/5 px-4 py-3 text-sm text-gold">Local demo · Changes are saved in this browser. Orders and inbox start empty.</p>}
         <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
           {tab === "products" && <ProductsTab />}
           {tab === "offers" && <OffersTab />}

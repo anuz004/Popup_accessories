@@ -1,6 +1,7 @@
+import { BrandLogo } from "@/components/BrandLogo";
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
-import { Search, Heart, ShoppingBag, Menu, X, Watch } from "lucide-react";
+import { Search, Heart, ShoppingBag, Menu, X } from "lucide-react";
 import { useRouter } from "@/context/RouterContext";
 import { useStore, formatINR } from "@/context/StoreContext";
 import { useProducts } from "@/context/ProductsContext";
@@ -8,9 +9,7 @@ import { ProductVisual } from "@/components/ProductVisual";
 
 const NAV_LINKS: { label: string; page: "home" | "shop" | "about" | "contact"; category?: string }[] = [
   { label: "Home", page: "home" },
-  { label: "Shop All", page: "shop" },
-  { label: "Luxury", page: "shop", category: "Luxury" },
-  { label: "Sport", page: "shop", category: "Sport" },
+  { label: "Shop Now", page: "shop" },
   { label: "About", page: "about" },
   { label: "Contact", page: "contact" },
 ];
@@ -68,11 +67,7 @@ export function Nav() {
               onClick={() => go("home")}
               className="flex items-center gap-2 font-display text-white shrink-0"
             >
-              <Watch size={22} className="text-gold" strokeWidth={1.5} />
-              <span className="text-lg md:text-xl tracking-[0.1em] md:tracking-[0.15em]">
-                <span className="sm:hidden">POPUP</span>
-                <span className="hidden sm:inline">POPUP ACCESSORIES</span>
-              </span>
+              <BrandLogo className="w-[164px] sm:w-[210px]" />
             </button>
 
             <nav className="hidden lg:flex items-center gap-8">
@@ -194,7 +189,7 @@ export function Nav() {
             className="fixed inset-0 z-[60] bg-[#080808]/98 backdrop-blur lg:hidden"
           >
             <div className="flex justify-between items-center px-5 h-20">
-              <span className="font-display text-lg text-white tracking-[0.15em]">POPUP ACCESSORIES</span>
+              <BrandLogo className="w-[210px]" />
               <button onClick={() => setMobileOpen(false)} className="h-9 w-9 flex items-center justify-center text-white">
                 <X size={22} />
               </button>

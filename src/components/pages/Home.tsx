@@ -56,7 +56,7 @@ export function Home() {
               <span className="text-gold italic">Everyday</span> Confidence.
             </motion.h1>
             <motion.p variants={fadeUp} className="text-white/55 text-base md:text-lg leading-relaxed mb-10 max-w-md">
-              Popup Accessories brings you a carefully chosen collection of watches for every lifestyle — genuine products, honest prices, and Cash on Delivery across India.
+              Grand Hour brings you a carefully chosen collection of watches for every lifestyle — genuine products, honest prices, and Cash on Delivery across India.
             </motion.p>
             <motion.div variants={fadeUp} className="flex flex-wrap items-center gap-4">
               <button
@@ -146,7 +146,7 @@ export function Home() {
       {/* ================= WHY CHOOSE US ================= */}
       <section className="bg-[#0b0b0c] border-y border-white/[0.06] py-24 md:py-28 my-8">
         <div className="max-w-7xl mx-auto px-5 md:px-8">
-          <DialEyebrow hour="VI" label="Why Popup Accessories" />
+          <DialEyebrow hour="VI" label="Why Grand Hour" />
           <h2 className="font-display text-3xl md:text-4xl text-white mb-14 max-w-lg">
             A trusted local store, now online.
           </h2>
@@ -253,7 +253,7 @@ export function Home() {
         <div className="flex items-center justify-between mb-10 flex-wrap gap-4">
           <div>
             <DialEyebrow hour="I" label="From The Atelier" />
-            <h2 className="font-display text-3xl md:text-4xl text-white">@popupaccessories</h2>
+            <h2 className="font-display text-3xl md:text-4xl text-white">Grand Hour</h2>
           </div>
           <span className="text-gold text-sm flex items-center gap-1.5"><Camera size={15} /> The collection</span>
         </div>
@@ -303,7 +303,7 @@ function NewsletterBand() {
         <h2 className="font-display text-2xl md:text-3xl text-white mb-3">Join the inner circle.</h2>
         <p className="text-white/50 text-sm mb-7 max-w-md mx-auto">Early access to limited releases and one atelier story a month. No spam, ever.</p>
         {sent ? (
-          <p className="text-gold text-sm">You're on the list — welcome to Popup Accessories.</p>
+          <p className="text-gold text-sm">You're on the list — welcome to Grand Hour.</p>
         ) : (
           <form
             onSubmit={async (e) => {

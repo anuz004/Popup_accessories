@@ -1,6 +1,7 @@
+import { demoCredentials } from "@/lib/localDatabase";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabase";
+import { supabase, localDemoMode } from "@/lib/supabase";
 
 interface AuthState {
   session: Session | null;
@@ -18,23 +19,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (localDemoMode) {
+      setIsAdmin(sessionStorage.getItem("grand-hour:demo-admin") === "true");
+      setLoading(false);
+      return;
+    }
+    let active = true;
     supabase.auth.getSession().then(async ({ data }) => {
+      if (!active) return;
       const current = data.session;
       setSession(current);
       if (current) {
         const { data: allowed } = await supabase.rpc("is_admin");
+        if (!active) return;
         setIsAdmin(Boolean(allowed));
       }
       setLoading(false);
+    }).catch(() => {
+      if (active) {
+        setIsAdmin(false);
+        setLoading(false);
+      }
     });
-    const { data: sub } = supabase.auth.onAuthStateChange(async (_event, sess) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, sess) => {
       setSession(sess);
       if (!sess) setIsAdmin(false);
     });
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
+    if (localDemoMode) {
+      if (email.trim().toLowerCase() !== demoCredentials.email || password !== demoCredentials.password)
+        return { error: "Use the demo email and password shown above." };
+      sessionStorage.setItem("grand-hour:demo-admin", "true");
+      setIsAdmin(true);
+      return { error: null };
+    }
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) return { error: error.message };
     const { data: allowed, error: permissionError } = await supabase.rpc("is_admin");
@@ -48,6 +72,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
+    if (localDemoMode) {
+      sessionStorage.removeItem("grand-hour:demo-admin");
+      setIsAdmin(false);
+      return;
+    }
     await supabase.auth.signOut();
   };
 

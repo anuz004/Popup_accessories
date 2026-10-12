@@ -1,5 +1,6 @@
+import { BrandLogo } from "@/components/BrandLogo";
 import { useState } from "react";
-import { Watch, MapPin, Phone, Mail } from "lucide-react";
+import { MapPin, Phone, Mail } from "lucide-react";
 
 import { useRouter } from "@/context/RouterContext";
 import { toast } from "sonner";
@@ -17,8 +18,7 @@ export function Footer() {
         <div className="grid md:grid-cols-[1.4fr_1fr_1fr_1.2fr] gap-12 mb-16">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Watch size={22} className="text-gold" strokeWidth={1.5} />
-              <span className="font-display text-lg tracking-[0.15em] text-white">POPUP ACCESSORIES</span>
+              <BrandLogo className="w-[230px] max-w-full" />
             </div>
             <p className="text-white/50 text-sm leading-relaxed max-w-xs mb-6">
               Your trusted destination for premium watches and fashion accessories in the heart of Coimbatore.
@@ -84,7 +84,7 @@ export function Footer() {
         </div>
 
         <div className="pt-8 border-t border-white/[0.06] flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/35">
-          <p>© 2026 Popup Accessories. All rights reserved.</p>
+          <p>© 2026 Grand Hour. All rights reserved.</p>
           <div className="flex gap-6">
             <button onClick={() => go("privacy")} className="hover:text-white/70">Privacy Policy</button>
             <button onClick={() => go("terms")} className="hover:text-white/70">Terms of Service</button>

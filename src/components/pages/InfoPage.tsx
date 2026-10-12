@@ -41,7 +41,7 @@ const CONTENT: Partial<Record<Page, { title: string; intro: string; sections: { 
   },
   terms: {
     title: "Terms of Service",
-    intro: "These terms apply when you browse the site or place an order with Popup Accessories.",
+    intro: "These terms apply when you browse the site or place an order with Grand Hour.",
     sections: [
       { heading: "Orders", body: "An order is a request to purchase. We may contact you to confirm availability, delivery details or pricing before accepting it." },
       { heading: "Product information", body: "We aim to present colours, specifications and prices accurately. Minor visual differences may occur between illustrations, screens and the delivered item." },
