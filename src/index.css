@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --background: 0 0% 3%;
+    --foreground: 0 0% 98%;
+    --card: 220 8% 10%;
+    --card-foreground: 0 0% 98%;
+    --popover: 220 9% 8%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 45 65% 52%;
+    --primary-foreground: 0 0% 6%;
+    --secondary: 220 8% 10%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 220 6% 14%;
+    --muted-foreground: 0 0% 72%;
+    --accent: 45 65% 52%;
+    --accent-foreground: 0 0% 6%;
+    --destructive: 0 62.8% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 6% 18%;
+    --input: 220 6% 16%;
+    --ring: 45 65% 52%;
+    --radius: 1rem;
+
+    --gold: 45 65% 52%;
+    --gold-soft: 45 55% 62%;
+    --ink: 0 0% 3%;
+    --panel: 220 8% 10%;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Inter', sans-serif;
+    background-color: #080808;
+  }
+  h1, h2, h3, h4, .font-display {
+    font-family: 'Playfair Display', serif;
+  }
+  ::selection {
+    background: #D4AF37;
+    color: #080808;
+  }
+  /* thin luxury scrollbar */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: #0F0F10; }
+  ::-webkit-scrollbar-thumb { background: #2a2a2e; border-radius: 8px; }
+  ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .text-gold { color: #D4AF37; }
+  .bg-gold { background-color: #D4AF37; }
+  .border-gold { border-color: #D4AF37; }
+  .tracking-luxe { letter-spacing: 0.2em; }
+}
