@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Trash2, X, Loader2, Tag } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { database } from "@/lib/api";
 import { toast } from "sonner";
 import { useProducts } from "@/context/ProductsContext";
 
@@ -31,7 +31,7 @@ const emptyForm = {
 };
 
 export function OffersTab() {
-  const { products } = useProducts();
+  const { products, refresh } = useProducts();
   const [rows, setRows] = useState<OfferRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [formOpen, setFormOpen] = useState(false);
@@ -40,7 +40,7 @@ export function OffersTab() {
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase.from("offers").select("*").order("created_at", { ascending: false });
+    const { data, error } = await database.from("offers").select("*").order("created_at", { ascending: false });
     if (error) toast.error(error.message);
     setRows((data as OfferRow[]) ?? []);
     setLoading(false);
@@ -65,7 +65,7 @@ export function OffersTab() {
       return;
     }
     setSaving(true);
-    const { error } = await supabase.from("offers").insert({
+    const { error } = await database.from("offers").insert({
       title: form.title.trim(),
       code: form.code.trim() ? form.code.trim().toUpperCase() : null,
       discount_type: form.discount_type,
@@ -82,26 +82,29 @@ export function OffersTab() {
     toast.success("Offer created");
     setFormOpen(false);
     load();
+    await refresh();
   };
 
   const remove = async (r: OfferRow) => {
     if (!confirm(`Delete offer "${r.title}"?`)) return;
-    const { error } = await supabase.from("offers").delete().eq("id", r.id);
+    const { error } = await database.from("offers").delete().eq("id", r.id);
     if (error) {
       toast.error(error.message);
       return;
     }
     setRows((prev) => prev.filter((o) => o.id !== r.id));
     toast.success("Offer deleted");
+    await refresh();
   };
 
   const toggleActive = async (r: OfferRow) => {
-    const { error } = await supabase.from("offers").update({ active: !r.active }).eq("id", r.id);
+    const { error } = await database.from("offers").update({ active: !r.active }).eq("id", r.id);
     if (error) {
       toast.error(error.message);
       return;
     }
     setRows((prev) => prev.map((o) => (o.id === r.id ? { ...o, active: !o.active } : o)));
+    await refresh();
   };
 
   return (
@@ -146,7 +149,7 @@ export function OffersTab() {
               >
                 {r.active ? "Active" : "Paused"}
               </button>
-              <button onClick={() => remove(r)} className="h-8 w-8 shrink-0 flex items-center justify-center rounded-full hover:bg-white/5 text-white/60 hover:text-red-400 transition-colors">
+              <button aria-label={`Delete ${r.title}`} onClick={() => remove(r)} className="h-8 w-8 shrink-0 flex items-center justify-center rounded-full hover:bg-white/5 text-white/60 hover:text-red-400 transition-colors">
                 <Trash2 size={14} />
               </button>
             </div>
@@ -182,7 +185,7 @@ export function OffersTab() {
                 <div>
                   <label className="text-xs text-white/50 mb-1.5 block">Title (shown to customers)</label>
                   <input
-                    value={form.title}
+                    aria-label="Title" value={form.title}
                     onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
                     placeholder="e.g. Festive Sale"
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-gold/50"
@@ -192,7 +195,7 @@ export function OffersTab() {
                 <div>
                   <label className="text-xs text-white/50 mb-1.5 block">Coupon code (leave blank to apply automatically)</label>
                   <input
-                    value={form.code}
+                    aria-label="Coupon code" value={form.code}
                     onChange={(e) => setForm((f) => ({ ...f, code: e.target.value }))}
                     placeholder="e.g. FESTIVE10"
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-gold/50 uppercase"
@@ -203,7 +206,7 @@ export function OffersTab() {
                   <div>
                     <label className="text-xs text-white/50 mb-1.5 block">Discount Type</label>
                     <select
-                      value={form.discount_type}
+                      aria-label="Discount Type" value={form.discount_type}
                       onChange={(e) => setForm((f) => ({ ...f, discount_type: e.target.value }))}
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-gold/50"
                     >
@@ -215,7 +218,7 @@ export function OffersTab() {
                     <label className="text-xs text-white/50 mb-1.5 block">Value</label>
                     <input
                       type="number"
-                      value={form.discount_value}
+                      aria-label="Value" value={form.discount_value}
                       onChange={(e) => setForm((f) => ({ ...f, discount_value: Number(e.target.value) }))}
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-gold/50"
                     />
@@ -225,7 +228,7 @@ export function OffersTab() {
                 <div>
                   <label className="text-xs text-white/50 mb-1.5 block">Applies To</label>
                   <select
-                    value={form.scope}
+                    aria-label="Applies To" value={form.scope}
                     onChange={(e) => setForm((f) => ({ ...f, scope: e.target.value, target: "" }))}
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-gold/50"
                   >
@@ -239,7 +242,7 @@ export function OffersTab() {
                   <div>
                     <label className="text-xs text-white/50 mb-1.5 block">Category</label>
                     <select
-                      value={form.target}
+                      aria-label="Target" value={form.target}
                       onChange={(e) => setForm((f) => ({ ...f, target: e.target.value }))}
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-gold/50"
                     >
@@ -255,7 +258,7 @@ export function OffersTab() {
                   <div>
                     <label className="text-xs text-white/50 mb-1.5 block">Product</label>
                     <select
-                      value={form.target}
+                      aria-label="Target" value={form.target}
                       onChange={(e) => setForm((f) => ({ ...f, target: e.target.value }))}
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-gold/50"
                     >

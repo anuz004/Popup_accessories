@@ -1,3 +1,4 @@
+import { useStore } from "@/context/StoreContext";
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SlidersHorizontal, X, ChevronDown } from "lucide-react";
@@ -12,6 +13,7 @@ import {
   Sheet,
   SheetContent,
   SheetTrigger,
+  SheetTitle,
 } from "@/components/ui/sheet";
 
 const CATEGORIES = ["Classic", "Sport", "Luxury", "Smart", "Limited Edition"];
@@ -21,16 +23,19 @@ const MOVEMENTS = ["Automatic", "Quartz", "Smart OS"];
 type Sort = "newest" | "popular" | "low" | "high";
 
 export function Shop() {
-  const { shopFilter, go } = useRouter();
+  const { shopFilter, go, page } = useRouter();
+  const { wishlist } = useStore();
+  const wishlistOnly = page === "wishlist";
   const { products, bestPriceFor, loading } = useProducts();
   const [categories, setCategories] = useState<string[]>([]);
   const [genders, setGenders] = useState<string[]>([]);
   const [movements, setMovements] = useState<string[]>([]);
   const [lines, setLines] = useState<string[]>([]);
-  const [maxPrice, setMaxPrice] = useState(15000);
+  const [maxPrice, setMaxPrice] = useState(Infinity);
   const [sort, setSort] = useState<Sort>("newest");
   const [quickView, setQuickView] = useState<Product | null>(null);
   const [sortOpen, setSortOpen] = useState(false);
+  const priceCeiling = Math.max(15000, ...products.map(p => Math.ceil(p.price / 500) * 500));
   const LINES = useMemo(() => Array.from(new Set(products.map((p) => p.line))), [products]);
 
   useEffect(() => {
@@ -47,6 +52,7 @@ export function Shop() {
 
   const filtered = useMemo(() => {
     let list = products.filter((p) => {
+      if (wishlistOnly && !wishlist.includes(p.id)) return false;
       if (categories.length && !categories.includes(p.category)) return false;
       if (genders.length && !genders.includes(p.gender)) return false;
       if (movements.length && !movements.includes(p.movement)) return false;
@@ -65,21 +71,21 @@ export function Shop() {
         list = [...list].sort((a, b) => b.reviews - a.reviews);
         break;
       default:
-        list = [...list].sort((a, b) => (b.badge === "New" ? 1 : 0) - (a.badge === "New" ? 1 : 0));
+        list = [...list].sort((a, b) => Date.parse(b.createdAt || "1970-01-01") - Date.parse(a.createdAt || "1970-01-01"));
     }
     return list;
-  }, [products, categories, genders, movements, lines, maxPrice, sort, bestPriceFor]);
+  }, [products, categories, genders, movements, lines, maxPrice, sort, bestPriceFor, wishlistOnly, wishlist]);
 
   const clearAll = () => {
     setCategories([]);
     setGenders([]);
     setMovements([]);
     setLines([]);
-    setMaxPrice(15000);
-    go("shop");
+    setMaxPrice(Infinity);
+    go(wishlistOnly ? "wishlist" : "shop");
   };
 
-  const activeCount = categories.length + genders.length + movements.length + lines.length + (maxPrice < 15000 ? 1 : 0);
+  const activeCount = categories.length + genders.length + movements.length + lines.length + (maxPrice < priceCeiling ? 1 : 0);
 
   const FilterPanel = (
     <div className="space-y-8">
@@ -106,14 +112,15 @@ export function Shop() {
       <FilterGroup title="Max Price">
         <input
           type="range"
-          min={3000}
-          max={15000}
+          aria-label="Maximum price"
+          min={0}
+          max={priceCeiling}
           step={500}
-          value={maxPrice}
+          value={Math.min(maxPrice, priceCeiling)}
           onChange={(e) => setMaxPrice(Number(e.target.value))}
           className="w-full accent-[#D4AF37]"
         />
-        <p className="text-xs text-white/50 mt-2">Up to {formatINR(maxPrice)}</p>
+        <p className="text-xs text-white/50 mt-2">Up to {formatINR(Math.min(maxPrice, priceCeiling))}</p>
       </FilterGroup>
       {activeCount > 0 && (
         <button onClick={clearAll} className="text-xs text-gold underline underline-offset-4">
@@ -125,11 +132,11 @@ export function Shop() {
 
   return (
     <div className="max-w-7xl mx-auto px-5 md:px-8 pt-28 md:pt-32 pb-24">
-      <DialEyebrow hour="II" label="Shop All" />
+      <DialEyebrow hour="II" label={wishlistOnly ? "Wishlist" : "Shop Now"} />
       <div className="flex items-end justify-between flex-wrap gap-4 mb-10">
         <div>
           <h1 className="font-display text-4xl md:text-5xl text-white mb-2">
-            {categories.length === 1 ? categories[0] : "The Full Collection"}
+            {wishlistOnly ? "Your Wishlist" : categories.length === 1 ? categories[0] : "The Full Collection"}
           </h1>
           <p className="text-white/45 text-sm">{filtered.length} timepieces</p>
         </div>
@@ -141,8 +148,8 @@ export function Shop() {
                 <SlidersHorizontal size={14} /> Filters {activeCount > 0 && `(${activeCount})`}
               </button>
             </SheetTrigger>
-            <SheetContent side="left" className="bg-[#0b0b0c] border-white/10 w-[300px] overflow-y-auto">
-              <p className="font-display text-lg text-white mb-6 mt-4">Filters</p>
+            <SheetContent aria-describedby={undefined} side="left" className="bg-[#0b0b0c] border-white/10 w-[300px] overflow-y-auto">
+              <SheetTitle className="font-display text-lg text-white mb-6 mt-4">Filters</SheetTitle>
               {FilterPanel}
             </SheetContent>
           </Sheet>
@@ -216,7 +223,7 @@ export function Shop() {
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-24">
-              <p className="text-white/50 mb-4">No pieces match these filters.</p>
+              <p className="text-white/50 mb-4">{wishlistOnly && wishlist.length === 0 ? "Your wishlist is empty. Tap a heart on a product to save it." : "No pieces match these filters."}</p>
               <button onClick={clearAll} className="text-gold text-sm underline underline-offset-4">
                 Clear filters
               </button>
@@ -255,7 +262,7 @@ function Checkbox({ label, checked, onChange }: { label: string; checked: boolea
       >
         {checked && <span className="h-1.5 w-1.5 rounded-sm bg-[#0F0F10]" />}
       </span>
-      <input type="checkbox" checked={checked} onChange={onChange} className="hidden" />
+      <input type="checkbox" checked={checked} onChange={onChange} className="sr-only" />
       <span className="text-sm text-white/65 group-hover:text-white transition-colors">{label}</span>
     </label>
   );

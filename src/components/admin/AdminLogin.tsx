@@ -1,13 +1,11 @@
-import { demoCredentials } from "@/lib/localDatabase";
 import { BrandLogo } from "@/components/BrandLogo";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Lock, ArrowRight } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { localDemoMode } from "@/lib/supabase";
 
 export function AdminLogin() {
-  const { signIn } = useAuth();
+  const { signIn, connectionError } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -39,18 +37,16 @@ export function AdminLogin() {
           <BrandLogo className="w-[240px] max-w-full" />
         </div>
         <p className="text-center text-white/40 text-xs uppercase tracking-luxe mb-8">Admin Sign In</p>
-        {localDemoMode && (
-          <p className="mb-6 rounded-xl border border-gold/20 bg-gold/5 p-3 text-sm text-gold" role="status">
-            Local demo sign-in<br />
-            Email: {demoCredentials.email}<br />
-            Password: {demoCredentials.password}
-          </p>
+        {connectionError && (
+          <p className="mb-6 rounded-xl border border-gold/20 bg-gold/5 p-3 text-sm text-gold" role="status">{connectionError}</p>
         )}
 
         <form onSubmit={submit} className="space-y-4">
           <div>
             <label className="text-xs text-white/50 mb-1.5 block">Email</label>
             <input
+              aria-label="Email"
+              autoComplete="username"
               type="email"
               required
               value={email}
@@ -62,6 +58,8 @@ export function AdminLogin() {
           <div>
             <label className="text-xs text-white/50 mb-1.5 block">Password</label>
             <input
+              aria-label="Password"
+              autoComplete="current-password"
               type="password"
               required
               value={password}

@@ -73,6 +73,7 @@ export function OrderSuccess() {
           </div>
           <div className="space-y-2 text-sm border-t border-white/[0.06] pt-4">
             <div className="flex justify-between text-white/55"><span>Subtotal</span><span>{formatINR(order.subtotal)}</span></div>
+            {order.discount > 0 && <div className="flex justify-between text-emerald-400"><span>Discount</span><span>-{formatINR(order.discount)}</span></div>}
             <div className="flex justify-between text-white/55"><span>Shipping</span><span>{order.shipping === 0 ? "Free" : formatINR(order.shipping)}</span></div>
             <div className="flex justify-between text-white font-medium pt-2 border-t border-white/[0.06]"><span>Total (COD)</span><span>{formatINR(order.total)}</span></div>
           </div>

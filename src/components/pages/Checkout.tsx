@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Banknote, Lock, ShieldCheck, ArrowRight } from "lucide-react";
 import { ProductVisual } from "@/components/ProductVisual";
@@ -19,10 +20,13 @@ const STATES = [
 const empty: Address = { firstName: "", lastName: "", phone: "", email: "", address: "", state: "", city: "", pincode: "" };
 
 export function Checkout() {
+  const { session, googleEnabled } = useAuth();
+  const customer = session?.role === "customer" ? session : null;
   const { cart, cartSubtotal, cartDiscount, cartShipping, cartTotal, placeOrder } = useStore();
   const { products, bestPriceFor } = useProducts();
   const { go } = useRouter();
-  const [form, setForm] = useState<Address>(empty);
+  const [form, setForm] = useState<Address>(() => ({ ...empty, email: customer?.email || "", firstName: customer?.name?.split(" ")[0] || "" }));
+  useEffect(() => { if (customer) setForm(current => ({ ...current, email: customer.email, firstName: current.firstName || customer.name?.split(" ")[0] || "" })); }, [customer]);
   const [errors, setErrors] = useState<Partial<Record<keyof Address, string>>>({});
   const [submitting, setSubmitting] = useState(false);
 
@@ -80,6 +84,9 @@ export function Checkout() {
       <DialEyebrow hour="VII" label="Checkout" />
       <h1 className="font-display text-3xl md:text-4xl text-white mb-10">Checkout</h1>
 
+      <div className="mb-6 rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-white/65">
+        {customer ? `Signed in as ${customer.email}. Order updates will be sent to this email.` : <><p>Sign in with Google to save your orders. Order updates are sent by email.</p>{googleEnabled && <a href="/api/auth/google?returnTo=checkout" className="mt-2 inline-block text-gold hover:underline">Continue with Google</a>}</>}
+      </div>
       <form onSubmit={submit} className="grid lg:grid-cols-[1fr_380px] gap-10">
         <div className="space-y-8">
           <section>
@@ -88,7 +95,7 @@ export function Checkout() {
               <Field label="First Name" value={form.firstName} onChange={(v) => update("firstName", v)} error={errors.firstName} />
               <Field label="Last Name" value={form.lastName} onChange={(v) => update("lastName", v)} error={errors.lastName} />
               <Field label="Phone Number" value={form.phone} onChange={(v) => update("phone", v.replace(/\D/g, "").slice(0, 10))} error={errors.phone} placeholder="10-digit mobile" />
-              <Field label="Email" type="email" value={form.email} onChange={(v) => update("email", v)} error={errors.email} />
+              <Field label="Email" readOnly={Boolean(customer)} type="email" value={form.email} onChange={(v) => update("email", v)} error={errors.email} />
             </div>
           </section>
 
@@ -100,6 +107,7 @@ export function Checkout() {
                 <div>
                   <label className="text-xs text-white/50 mb-1.5 block">State</label>
                   <select
+                    aria-label="State"
                     value={form.state}
                     onChange={(e) => update("state", e.target.value)}
                     className={`w-full bg-white/5 border rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-gold/50 ${errors.state ? "border-red-500/60" : "border-white/10"}`}
@@ -202,6 +210,7 @@ function Field({
   error,
   type = "text",
   placeholder,
+  readOnly = false,
 }: {
   label: string;
   value: string;
@@ -209,11 +218,14 @@ function Field({
   error?: string;
   type?: string;
   placeholder?: string;
+  readOnly?: boolean;
 }) {
   return (
     <div>
       <label className="text-xs text-white/50 mb-1.5 block">{label}</label>
       <input
+        readOnly={readOnly}
+        aria-label={label}
         type={type}
         value={value}
         placeholder={placeholder}

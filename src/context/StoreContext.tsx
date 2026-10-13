@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { supabase } from "@/lib/supabase";
+import { database } from "@/lib/api";
 import { useProducts } from "@/context/ProductsContext";
 import type { Product, Offer } from "@/data/products";
 
@@ -118,9 +118,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setCart((prev) => {
       const existing = prev.find((l) => l.productId === productId);
       if (existing) {
-        return prev.map((l) => (l.productId === productId ? { ...l, qty: l.qty + qty } : l));
+        return prev.map((l) => (l.productId === productId ? { ...l, qty: Math.min(9, l.qty + qty) } : l));
       }
-      return [...prev, { productId, qty }];
+      return [...prev, { productId, qty: Math.min(9, Math.max(1, qty)) }];
     });
   };
   const removeFromCart = (productId: string) => {
@@ -128,7 +128,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   };
   const setQty = (productId: string, qty: number) => {
     setCart((prev) =>
-      qty <= 0 ? prev.filter((l) => l.productId !== productId) : prev.map((l) => (l.productId === productId ? { ...l, qty } : l))
+      qty <= 0 ? prev.filter((l) => l.productId !== productId) : prev.map((l) => (l.productId === productId ? { ...l, qty: Math.min(9, qty) } : l))
     );
   };
   const clearCart = () => {
@@ -194,7 +194,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
     // Prices and discounts are recomputed by the database function. Never trust
     // totals supplied by a browser for an order.
-    const { data, error } = await supabase.rpc("place_order", {
+    const { data, error } = await database.rpc("place_order", {
       customer: {
         first_name: address.firstName,
         last_name: address.lastName,

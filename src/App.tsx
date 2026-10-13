@@ -15,6 +15,7 @@ import { Checkout } from "@/components/pages/Checkout";
 import { OrderSuccess } from "@/components/pages/OrderSuccess";
 import { About } from "@/components/pages/About";
 import { Contact } from "@/components/pages/Contact";
+import { Account } from "@/components/pages/Account";
 import { Admin } from "@/components/pages/Admin";
 import { InfoPage } from "@/components/pages/InfoPage";
 import { useProducts } from "@/context/ProductsContext";
@@ -26,6 +27,7 @@ function Pages() {
     switch (page) {
       case "home":
         return <Home />;
+      case "wishlist":
       case "shop":
         return <Shop />;
       case "product":
@@ -46,6 +48,8 @@ function Pages() {
       case "privacy":
       case "terms":
         return <InfoPage kind={page} />;
+      case "account":
+        return <Account />;
       case "admin":
         return <Admin />;
       default:

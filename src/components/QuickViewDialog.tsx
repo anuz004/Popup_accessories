@@ -16,7 +16,7 @@ export function QuickViewDialog({ product, onOpenChange }: { product: Product | 
 
   return (
     <Dialog open={!!product} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#111114] border-white/10 max-w-3xl p-0 overflow-hidden rounded-[20px]">
+      <DialogContent aria-describedby={undefined} className="bg-[#111114] border-white/10 max-w-3xl p-0 overflow-hidden rounded-[20px]">
         {product && (
           <div className="grid md:grid-cols-2">
             <div className="bg-gradient-to-b from-[#17181C] to-[#0b0b0c] p-10 flex items-center justify-center">
@@ -52,6 +52,7 @@ export function QuickViewDialog({ product, onOpenChange }: { product: Product | 
                   <ShoppingBag size={14} /> Add to Cart
                 </button>
                 <button
+                  aria-label={isWishlisted(product.id) ? "Remove from wishlist" : "Add to wishlist"}
                   onClick={() => toggleWishlist(product.id)}
                   className="h-11 w-11 shrink-0 flex items-center justify-center rounded-full border border-white/15 hover:border-gold/50 transition-colors"
                 >

@@ -24,7 +24,9 @@ export interface Product {
   description: string;
   short: string;
   imageUrl?: string | null;
+  imageUrls?: string[];
   active?: boolean;
+  createdAt?: string;
 }
 
 export interface Offer {

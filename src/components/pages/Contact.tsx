@@ -6,8 +6,7 @@ import { toast } from "sonner";
 import { sendContactMessage } from "@/lib/customerMessages";
 import { siteConfig } from "@/lib/siteConfig";
 
-const ADDRESS = siteConfig.address;
-const MAP_SRC = `https://www.google.com/maps?q=${encodeURIComponent(ADDRESS)}&output=embed`;
+const MAP_SRC = `https://www.google.com/maps?q=${encodeURIComponent(siteConfig.mapCoordinates)}&z=17&output=embed`;
 
 export function Contact() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
@@ -43,7 +42,10 @@ export function Contact() {
         <div className="space-y-8">
           <div className="grid sm:grid-cols-2 gap-4">
             <InfoCard icon={MapPin} label="Store Address">
-              H.R Complex, Prakasam Bus Stop, Oppanakara Street, Near AB Lodge, Town Hall, Coimbatore, Tamil Nadu 641001, India
+              {siteConfig.address}
+              <a href={siteConfig.mapUrl} target="_blank" rel="noopener noreferrer" className="mt-3 block text-gold hover:underline">
+                Open in Google Maps ↗
+              </a>
             </InfoCard>
             <InfoCard icon={Clock} label="Working Hours">
               {siteConfig.hours ?? "Please contact the store to confirm today's hours."}
@@ -99,6 +101,7 @@ export function Contact() {
               <div>
                 <label className="text-xs text-white/50 mb-1.5 block">Message</label>
                 <textarea
+                  aria-label="Message"
                   value={form.message}
                   onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
                   rows={5}
@@ -136,6 +139,7 @@ function Field({ label, value, onChange, type = "text" }: { label: string; value
     <div>
       <label className="text-xs text-white/50 mb-1.5 block">{label}</label>
       <input
+        aria-label={label}
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}

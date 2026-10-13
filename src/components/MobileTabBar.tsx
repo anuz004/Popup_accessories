@@ -10,16 +10,17 @@ export function MobileTabBar() {
   const tabs = [
     { key: "home", label: "Home", icon: Home, onPress: () => go("home") },
     { key: "shop", label: "Shop", icon: LayoutGrid, onPress: () => go("shop") },
-    { key: "wishlist", label: "Wishlist", icon: Heart, badge: wishlist.length, onPress: () => go("shop") },
+    { key: "wishlist", label: "Wishlist", icon: Heart, badge: wishlist.length, onPress: () => go("wishlist") },
     { key: "cart", label: "Bag", icon: ShoppingBag, badge: cartCount, onPress: () => go("cart") },
-    { key: "account", label: "About", icon: User, onPress: () => go("about") },
+    { key: "account", label: "Account", icon: User, onPress: () => go("account") },
   ] as const;
 
   const isActive = (key: string) => {
     if (key === "home") return page === "home";
     if (key === "shop") return page === "shop" || page === "product";
+    if (key === "wishlist") return page === "wishlist";
     if (key === "cart") return page === "cart" || page === "checkout" || page === "success";
-    if (key === "account") return page === "about" || page === "contact";
+    if (key === "account") return page === "account";
     return false;
   };
 

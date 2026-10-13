@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
-import { supabase } from "@/lib/supabase";
+import { database } from "@/lib/api";
 import { fallbackProducts, type Product, type Offer } from "@/data/products";
 
 interface ProductRow {
@@ -26,7 +26,9 @@ interface ProductRow {
   description: string;
   short: string;
   image_url: string | null;
+  image_urls?: string[];
   active: boolean;
+  created_at?: string;
 }
 
 interface OfferRow {
@@ -66,8 +68,10 @@ function rowToProduct(r: ProductRow): Product {
     caseSize: r.case_size,
     description: r.description,
     short: r.short,
-    imageUrl: r.image_url,
+    imageUrl: r.image_urls?.[0] || r.image_url,
+    imageUrls: r.image_urls?.length ? r.image_urls : r.image_url ? [r.image_url] : [],
     active: r.active,
+    createdAt: r.created_at,
   };
 }
 
@@ -114,8 +118,8 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     setError(null);
     const [{ data: prodData, error: prodErr }, { data: offerData, error: offerErr }] = await Promise.all([
-      supabase.from("products").select("*").eq("active", true).order("created_at", { ascending: false }),
-      supabase.from("offers").select("*"),
+      database.from("products").select("*").eq("active", true).order("created_at", { ascending: false }),
+      database.from("offers").select("*"),
     ]);
     if (prodErr) {
       setError(`Live catalogue unavailable: ${prodErr.message}`);

@@ -1,17 +1,18 @@
 import { BrandLogo } from "@/components/BrandLogo";
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
-import { Search, Heart, ShoppingBag, Menu, X } from "lucide-react";
+import { Search, Heart, ShoppingBag, Menu, X, User } from "lucide-react";
 import { useRouter } from "@/context/RouterContext";
 import { useStore, formatINR } from "@/context/StoreContext";
 import { useProducts } from "@/context/ProductsContext";
 import { ProductVisual } from "@/components/ProductVisual";
 
-const NAV_LINKS: { label: string; page: "home" | "shop" | "about" | "contact"; category?: string }[] = [
+const NAV_LINKS: { label: string; page: "home" | "shop" | "about" | "contact" | "account"; category?: string }[] = [
   { label: "Home", page: "home" },
   { label: "Shop Now", page: "shop" },
   { label: "About", page: "about" },
   { label: "Contact", page: "contact" },
+  { label: "Account", page: "account" },
 ];
 
 export function Nav() {
@@ -85,6 +86,7 @@ export function Nav() {
             </nav>
 
             <div className="flex items-center gap-1.5 md:gap-3">
+              <button onClick={() => go("account")} aria-label="Customer account" className="hidden md:flex h-9 w-9 items-center justify-center text-white/85 hover:text-gold"><User size={18} /></button>
               <div className="relative" ref={searchRef}>
                 <button
                   onClick={() => setSearchOpen((v) => !v)}
@@ -96,11 +98,11 @@ export function Nav() {
                 <AnimatePresence>
                   {searchOpen && (
                     <motion.div
-                      initial={{ opacity: 0, y: -8, width: 0 }}
-                      animate={{ opacity: 1, y: 0, width: 320 }}
-                      exit={{ opacity: 0, y: -8, width: 0 }}
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
                       transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                      className="absolute right-0 mt-3 bg-[#111114] border border-white/10 rounded-2xl shadow-2xl overflow-hidden"
+                      className="fixed left-5 right-5 top-20 sm:absolute sm:left-auto sm:right-0 sm:top-auto sm:mt-3 sm:w-80 bg-[#111114] border border-white/10 rounded-2xl shadow-2xl overflow-hidden"
                     >
                       <div className="p-3 border-b border-white/10">
                         <input
@@ -143,7 +145,7 @@ export function Nav() {
               </div>
 
               <button
-                onClick={() => go("shop")}
+                onClick={() => go("wishlist")}
                 className="hidden md:flex h-9 w-9 items-center justify-center rounded-full hover:bg-white/5 text-white/85 relative transition-colors"
                 aria-label="Wishlist"
               >
@@ -190,7 +192,7 @@ export function Nav() {
           >
             <div className="flex justify-between items-center px-5 h-20">
               <BrandLogo className="w-[210px]" />
-              <button onClick={() => setMobileOpen(false)} className="h-9 w-9 flex items-center justify-center text-white">
+              <button aria-label="Close menu" onClick={() => setMobileOpen(false)} className="h-9 w-9 flex items-center justify-center text-white">
                 <X size={22} />
               </button>
             </div>

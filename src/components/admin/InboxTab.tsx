@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Check, Loader2, Mail } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { database } from "@/lib/api";
 import { toast } from "sonner";
 
 interface MessageRow { id: string; name: string; email: string; phone: string | null; message: string; status: string; created_at: string }
@@ -13,8 +13,8 @@ export function InboxTab() {
 
   useEffect(() => {
     Promise.all([
-      supabase.from("contact_messages").select("*").order("created_at", { ascending: false }),
-      supabase.from("newsletter_subscribers").select("*").order("created_at", { ascending: false }),
+      database.from("contact_messages").select("*").order("created_at", { ascending: false }),
+      database.from("newsletter_subscribers").select("*").order("created_at", { ascending: false }),
     ]).then(([messageResult, subscriberResult]) => {
       if (messageResult.error) toast.error(messageResult.error.message);
       if (subscriberResult.error) toast.error(subscriberResult.error.message);
@@ -25,7 +25,7 @@ export function InboxTab() {
   }, []);
 
   const resolve = async (row: MessageRow) => {
-    const { error } = await supabase.from("contact_messages").update({ status: "resolved" }).eq("id", row.id);
+    const { error } = await database.from("contact_messages").update({ status: "resolved" }).eq("id", row.id);
     if (error) return toast.error(error.message);
     setMessages((current) => current.map((message) => message.id === row.id ? { ...message, status: "resolved" } : message));
   };

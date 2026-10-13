@@ -1,7 +1,8 @@
+import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Loader2, Package, RefreshCw } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { database } from "@/lib/api";
 import { formatINR } from "@/context/StoreContext";
 import { toast } from "sonner";
 
@@ -43,6 +44,7 @@ const statusColor: Record<string, string> = {
 };
 
 export function OrdersTab() {
+  const { emailEnabled } = useAuth();
   const [rows, setRows] = useState<OrderRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -53,7 +55,7 @@ export function OrdersTab() {
   const load = async () => {
     setLoading(true);
     setError(null);
-    const { data, error } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
+    const { data, error } = await database.from("orders").select("*").order("created_at", { ascending: false });
     if (error) {
       setError(error.message);
       toast.error(`Orders could not be loaded: ${error.message}`);
@@ -70,7 +72,7 @@ export function OrdersTab() {
   const updateStatus = async (r: OrderRow, status: string) => {
     if (status === r.status || updatingId) return;
     setUpdatingId(r.id);
-    const { data, error } = await supabase.from("orders").update({ status }).eq("id", r.id).select("id, status").single();
+    const { data, error } = await database.from("orders").update({ status }).eq("id", r.id).select("id, status").single();
     setUpdatingId(null);
     if (error || !data) {
       toast.error(error?.message ?? "The order was not updated");
@@ -84,6 +86,7 @@ export function OrdersTab() {
 
   return (
     <div>
+      <p className="mb-4 rounded-xl border border-gold/20 bg-gold/5 p-3 text-sm text-gold">{emailEnabled ? "Order placement and status updates are queued for email delivery." : "Gmail email delivery needs configuration. Order emails will remain queued until it is connected."}</p>
       <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
         <div>
           <h1 className="font-display text-2xl text-white mb-1">Orders</h1>

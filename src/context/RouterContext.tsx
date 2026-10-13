@@ -4,6 +4,7 @@ import type { Order } from "@/context/StoreContext";
 export type Page =
   | "home"
   | "shop"
+  | "wishlist"
   | "product"
   | "cart"
   | "checkout"
@@ -15,7 +16,8 @@ export type Page =
   | "returns"
   | "privacy"
   | "terms"
-  | "admin";
+  | "admin"
+  | "account";
 
 interface RouterState {
   page: Page;
@@ -28,15 +30,18 @@ interface RouterState {
 const RouterContext = createContext<RouterState | null>(null);
 
 const SIMPLE_PATHS: Partial<Record<Page, string>> = {
-  home: "/", shop: "/shop", cart: "/cart", checkout: "/checkout", about: "/about",
-  contact: "/contact", admin: "/admin", faq: "/faq", warranty: "/warranty",
+  home: "/", shop: "/shop", wishlist: "/wishlist", cart: "/cart", checkout: "/checkout", about: "/about",
+  success: "/success", contact: "/contact", admin: "/admin", account: "/account", faq: "/faq", warranty: "/warranty",
   returns: "/returns", privacy: "/privacy", terms: "/terms",
 };
 
 function readLocation(): { page: Page; productId: string | null; category?: string } {
   const raw = window.location.hash.replace(/^#/, "") || "/";
   const [path, search = ""] = raw.split("?");
-  if (path.startsWith("/product/")) return { page: "product", productId: decodeURIComponent(path.slice(9)) };
+  if (path.startsWith("/product/")) {
+    try { return { page: "product", productId: decodeURIComponent(path.slice(9)) }; }
+    catch { return { page: "product", productId: null }; }
+  }
   const entry = Object.entries(SIMPLE_PATHS).find(([, value]) => value === path);
   const category = new URLSearchParams(search).get("category") ?? undefined;
   return { page: (entry?.[0] as Page | undefined) ?? "home", productId: null, category };

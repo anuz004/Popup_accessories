@@ -102,11 +102,11 @@ export function Cart() {
                   <p className="text-white/40 text-xs mt-1">{product.caseSize} &middot; {product.strapMaterial}</p>
                   <div className="mt-auto flex items-center justify-between pt-3">
                     <div className="flex items-center border border-white/15 rounded-full">
-                      <button onClick={() => setQty(product.id, qty - 1)} className="h-8 w-8 flex items-center justify-center text-white/70 hover:text-white">
+                      <button aria-label={`Decrease quantity of ${product.name}`} onClick={() => setQty(product.id, qty - 1)} className="h-8 w-8 flex items-center justify-center text-white/70 hover:text-white">
                         <Minus size={12} />
                       </button>
                       <span className="w-7 text-center text-white text-sm">{qty}</span>
-                      <button onClick={() => setQty(product.id, qty + 1)} className="h-8 w-8 flex items-center justify-center text-white/70 hover:text-white">
+                      <button aria-label={`Increase quantity of ${product.name}`} disabled={qty >= 9} onClick={() => setQty(product.id, qty + 1)} className="h-8 w-8 flex items-center justify-center text-white/70 hover:text-white">
                         <Plus size={12} />
                       </button>
                     </div>
@@ -126,7 +126,7 @@ export function Cart() {
           {appliedCoupon ? (
             <div className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/30 rounded-full px-4 py-2.5 mb-5">
               <span className="text-emerald-400 text-xs">{appliedCoupon.title}</span>
-              <button onClick={clearCoupon} className="text-white/40 hover:text-white">
+              <button aria-label="Remove coupon" onClick={clearCoupon} className="text-white/40 hover:text-white">
                 <X size={13} />
               </button>
             </div>

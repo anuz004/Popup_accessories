@@ -48,6 +48,10 @@ export function ProductDetail() {
     );
   }
 
+  const photos = product.imageUrls?.length ? product.imageUrls : product.imageUrl ? [product.imageUrl] : [];
+  const views = photos.length ? photos.map((url, i) => ({ label: `Photo ${i + 1}`, rotate: 0, scale: 1, url })) : VIEWS.map(v => ({ ...v, url: undefined }));
+  const selected = Math.min(slide, views.length - 1);
+
   const related = products.filter((p) => p.id !== product.id && (p.line === product.line || p.category === product.category)).slice(0, 4);
   const wished = isWishlisted(product.id);
   const { price: effectivePrice, offer: activeOffer } = bestPriceFor(product);
@@ -78,14 +82,14 @@ export function ProductDetail() {
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={0.6}
               onDragEnd={(_, info) => {
-                if (info.offset.x < -60) setSlide((s) => (s + 1) % VIEWS.length);
-                else if (info.offset.x > 60) setSlide((s) => (s - 1 + VIEWS.length) % VIEWS.length);
+                if (info.offset.x < -60) setSlide((s) => (s + 1) % views.length);
+                else if (info.offset.x > 60) setSlide((s) => (s - 1 + views.length) % views.length);
               }}
-              whileHover={{ scale: VIEWS[slide].scale * 1.06 }}
-              animate={{ rotate: rotation + VIEWS[slide].rotate, scale: VIEWS[slide].scale }}
+              whileHover={{ scale: views[selected].scale * 1.06 }}
+              animate={{ rotate: rotation + views[selected].rotate, scale: views[selected].scale }}
               transition={{ rotate: { duration: spinning ? 0.9 : 0.5, ease: "easeInOut" }, scale: { duration: 0.4 } }}
             >
-              <ProductVisual product={product} animated className="w-full h-full drop-shadow-2xl" />
+              <ProductVisual product={product} imageUrl={views[selected].url} animated className="w-full h-full drop-shadow-2xl" />
             </motion.div>
             {product.badge && (
               <span className="absolute top-4 left-4 text-[10px] font-semibold tracking-wider uppercase px-2.5 py-1 rounded-full bg-gold text-[#0F0F10]">
@@ -94,12 +98,12 @@ export function ProductDetail() {
             )}
             <div className="absolute bottom-4 inset-x-4 flex items-center justify-between">
               <div className="flex gap-1.5">
-                {VIEWS.map((v, i) => (
+                {views.map((v, i) => (
                   <button
                     key={v.label}
                     onClick={() => setSlide(i)}
                     aria-label={`Show ${v.label} view`}
-                    className={`h-1.5 rounded-full transition-all ${i === slide ? "w-6 bg-gold" : "w-1.5 bg-white/30"}`}
+                    className={`h-1.5 rounded-full transition-all ${i === selected ? "w-6 bg-gold" : "w-1.5 bg-white/30"}`}
                   />
                 ))}
               </div>
@@ -112,21 +116,22 @@ export function ProductDetail() {
               </button>
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-3">
-            {VIEWS.map((v, i) => (
+          <div className={`grid gap-3 ${photos.length ? "grid-cols-5" : "grid-cols-3"}`}>
+            {views.map((v, i) => (
               <button
                 key={v.label}
+                aria-label={`Select ${v.label}`}
                 onClick={() => setSlide(i)}
                 className={`aspect-square rounded-xl bg-[#111114] border p-4 flex flex-col items-center justify-center gap-1.5 transition-colors ${
-                  i === slide ? "border-gold/60" : "border-white/[0.06] hover:border-white/20"
+                  i === selected ? "border-gold/60" : "border-white/[0.06] hover:border-white/20"
                 }`}
               >
-                <ProductVisual product={product} className="w-full h-full opacity-90" />
-                <span className={`text-[10px] uppercase tracking-wide ${i === slide ? "text-gold" : "text-white/40"}`}>{v.label}</span>
+                <ProductVisual product={product} imageUrl={v.url} className="w-full h-full opacity-90" />
+                <span className={`text-[10px] uppercase tracking-wide ${i === selected ? "text-gold" : "text-white/40"}`}>{v.label}</span>
               </button>
             ))}
           </div>
-          <p className="lg:hidden text-center text-white/25 text-[11px] mt-3">Swipe the image to see more angles</p>
+          <p className="lg:hidden text-center text-white/25 text-[11px] mt-3">Swipe to see more photos</p>
         </div>
 
         {/* Info */}
@@ -170,11 +175,11 @@ export function ProductDetail() {
           <div className="flex items-center gap-4 mb-6">
             <span className="text-sm text-white/60">Quantity</span>
             <div className="flex items-center border border-white/15 rounded-full">
-              <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="h-9 w-9 flex items-center justify-center text-white/70 hover:text-white">
+              <button aria-label="Decrease quantity" disabled={qty <= 1} onClick={() => setQty((q) => Math.max(1, q - 1))} className="h-9 w-9 flex items-center justify-center text-white/70 hover:text-white">
                 <Minus size={13} />
               </button>
               <span className="w-8 text-center text-white text-sm">{qty}</span>
-              <button onClick={() => setQty((q) => Math.min(9, q + 1))} className="h-9 w-9 flex items-center justify-center text-white/70 hover:text-white">
+              <button aria-label="Increase quantity" disabled={qty >= 9} onClick={() => setQty((q) => Math.min(9, q + 1))} className="h-9 w-9 flex items-center justify-center text-white/70 hover:text-white">
                 <Plus size={13} />
               </button>
             </div>

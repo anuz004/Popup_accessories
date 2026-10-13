@@ -1,4 +1,3 @@
-import { localDemoMode } from "@/lib/supabase";
 import { BrandLogo } from "@/components/BrandLogo";
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -35,7 +34,7 @@ export function Admin() {
     );
   }
 
-  if ((!localDemoMode && !session) || !isAdmin) return <AdminLogin />;
+  if (!session || !isAdmin) return <AdminLogin />;
 
   return (
     <div className="min-h-screen bg-[#080808] flex flex-col lg:flex-row">
@@ -78,7 +77,6 @@ export function Admin() {
 
       {/* Content */}
       <main className="flex-1 p-5 md:p-10 max-w-5xl">
-        {localDemoMode && <p className="mb-6 rounded-xl border border-gold/20 bg-gold/5 px-4 py-3 text-sm text-gold">Local demo · Changes are saved in this browser. Orders and inbox start empty.</p>}
         <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
           {tab === "products" && <ProductsTab />}
           {tab === "offers" && <OffersTab />}
