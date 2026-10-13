@@ -28,6 +28,8 @@ The Gmail address is used as a public contact and admin identifier. Sending mess
 
 ## Deployment
 
+For Netlify frontend deployment with a separate Node backend, follow [DEPLOYMENT.md](DEPLOYMENT.md). It includes Netlify API proxy setup, a Docker backend option, Atlas environment settings, and production acceptance checks for your teammate.
+
 Build the frontend, configure the server environment, and deploy this as a Node application with HTTPS. Set `HOST=0.0.0.0`, `SITE_ORIGIN` to the public website origin, and `NODE_ENV=production` (set automatically by `npm start`). The production API uses secure, HTTP-only cookies and requires a proxy that terminates HTTPS. Database credentials, password hashes, and session secrets must stay server-side and must never use a `VITE_` prefix.
 
 The server validates admin access for private collections and every product, offer, and order-status mutation. Checkout recomputes prices and discounts from MongoDB records. Sessions persist in MongoDB and expire after eight hours. Browser demo credentials and Supabase connections have been removed.

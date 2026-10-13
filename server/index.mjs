@@ -38,6 +38,6 @@ if (production) {
   app.get('/{*path}', (_req, res) => res.sendFile(resolve(here, '../dist/index.html')));
 }
 const port = Number(process.env.PORT || 3001);
-const server = app.listen(port, process.env.HOST || '127.0.0.1', () => console.log(`Store API running on port ${port}`));
+const server = app.listen(port, process.env.HOST || (production ? '0.0.0.0' : '127.0.0.1'), () => console.log(`Store API running on port ${port}`));
 const close = () => { stopEmails(); server.close(async () => { await client?.close(); process.exit(0); }); };
 process.on('SIGINT', close); process.on('SIGTERM', close);

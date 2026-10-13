@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build:netlify"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22.16.0"
+
+# The build generates dist/_redirects from BACKEND_URL.
+# Configure that public backend HTTPS origin in Netlify's environment settings.
