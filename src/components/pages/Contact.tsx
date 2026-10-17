@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { sendContactMessage } from "@/lib/customerMessages";
 import { siteConfig } from "@/lib/siteConfig";
 
-const MAP_SRC = `https://www.google.com/maps?q=${encodeURIComponent(siteConfig.mapCoordinates)}&z=17&output=embed`;
+const MAP_SRC = `https://www.google.com/maps?q=${encodeURIComponent(siteConfig.address)}&z=17&output=embed`;
 
 export function Contact() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });

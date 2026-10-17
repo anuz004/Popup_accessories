@@ -76,7 +76,7 @@ export function Footer() {
               </button>
             </form>
             <div className="mt-6 space-y-2 text-xs text-white/40">
-              <div className="flex items-start gap-2"><MapPin size={13} className="mt-0.5 shrink-0" /> H.R Complex, Prakasam Bus Stop, Oppanakara Street, Near AB Lodge, Town Hall, Coimbatore, TN 641001</div>
+              <div className="flex items-start gap-2"><MapPin size={13} className="mt-0.5 shrink-0" /> {siteConfig.address}</div>
               {siteConfig.phone && <div className="flex items-center gap-2"><Phone size={13} /> <a href={`tel:${siteConfig.phone}`} className="hover:text-gold">{siteConfig.phone}</a></div>}
               {siteConfig.email && <div className="flex items-center gap-2"><Mail size={13} /> <a href={`mailto:${siteConfig.email}`} className="hover:text-gold">{siteConfig.email}</a></div>}
             </div>

@@ -3,6 +3,7 @@ import { MapPin, ShieldCheck, Banknote, Smile, Truck, Star, ArrowRight } from "l
 import { WatchArt } from "@/components/WatchArt";
 import { DialEyebrow } from "@/components/DialEyebrow";
 import { useRouter } from "@/context/RouterContext";
+import { siteConfig } from "@/lib/siteConfig";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 24 },
@@ -33,8 +34,7 @@ export function About() {
           </motion.h1>
           <motion.p variants={fadeUp} className="text-white/60 text-base leading-relaxed mb-5">
             Welcome to Grand Hour, your trusted destination for premium watches and fashion accessories in
-            the heart of Coimbatore. Conveniently located at H.R Complex, Prakasam Bus Stop, Oppanakara Street,
-            near AB Lodge, Town Hall, Coimbatore, we are dedicated to bringing you an exceptional collection of
+            the heart of Coimbatore. Conveniently located at {siteConfig.address}, we are dedicated to bringing you an exceptional collection of
             stylish, high-quality timepieces that suit every lifestyle and occasion.
           </motion.p>
           <motion.p variants={fadeUp} className="text-white/60 text-base leading-relaxed mb-5">
